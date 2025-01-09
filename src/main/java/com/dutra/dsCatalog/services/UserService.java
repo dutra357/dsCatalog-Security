@@ -1,7 +1,11 @@
 package com.dutra.dsCatalog.services;
 
+import com.dutra.dsCatalog.dtos.RoleDto;
 import com.dutra.dsCatalog.dtos.UserDto;
+import com.dutra.dsCatalog.dtos.UserInsertDto;
+import com.dutra.dsCatalog.entities.Role;
 import com.dutra.dsCatalog.entities.User;
+import com.dutra.dsCatalog.repositories.RoleRepository;
 import com.dutra.dsCatalog.repositories.UserRepository;
 import com.dutra.dsCatalog.services.exceptions.DataBaseException;
 import com.dutra.dsCatalog.services.exceptions.ResourceNotFoundException;
@@ -9,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository repository;
+    private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, RoleRepository roleRepository, BCryptPasswordEncoder passwordEncoder) {
         this.repository = repository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
@@ -35,9 +44,11 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto save(UserDto newUser) {
+    public UserDto save(UserInsertDto userInsertDto) {
         User user = new User();
-        user.setFirstName(newUser.getFirstName());
+        user.setPassword(passwordEncoder.encode(userInsertDto.getPassword()));
+
+        copyToEntity(user, userInsertDto);
 
         return new UserDto(repository.save(user));
     }
@@ -47,11 +58,23 @@ public class UserService {
         try {
             User user = repository.getReferenceById(id);
 
-            user.setFirstName(userDto.getFirstName());
+            copyToEntity(user, userDto);
 
             return new UserDto(repository.save(user));
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("ID not found!");
+        }
+    }
+
+    private void copyToEntity(User user, UserDto userDto) {
+        user.setFirstName(userDto.getFirstName());
+        user.setLastname(userDto.getLastName());
+        user.setEmail(userDto.getEmail());
+
+        user.getRoles().clear();
+        for (RoleDto roleDto : userDto.getRoles()) {
+            Role role = roleRepository.getReferenceById(roleDto.getId());
+            user.getRoles().add(role);
         }
     }
 
@@ -64,7 +87,6 @@ public class UserService {
 
         try {
             repository.deleteById(id);
-
         } catch (DataIntegrityViolationException e) {
             throw new DataBaseException("Referential integrity violation.");
         }
