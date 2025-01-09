@@ -2,6 +2,7 @@ package com.dutra.dsCatalog.controller;
 
 import com.dutra.dsCatalog.dtos.CategoryDto;
 import com.dutra.dsCatalog.services.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +34,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDto> save(@RequestBody CategoryDto newCategory) {
+    public ResponseEntity<CategoryDto> save(@Valid @RequestBody CategoryDto newCategory) {
         CategoryDto categorySaved = service.save(newCategory);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
@@ -43,7 +44,7 @@ public class CategoryController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long id, @RequestBody CategoryDto categoryIn) {
+    public ResponseEntity<CategoryDto> updateCategory(@Valid  @PathVariable Long id, @RequestBody CategoryDto categoryIn) {
         CategoryDto categoryUpDate = service.updateCategory(id, categoryIn);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()

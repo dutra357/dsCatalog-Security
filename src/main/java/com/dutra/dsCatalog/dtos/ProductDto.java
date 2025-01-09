@@ -2,6 +2,10 @@ package com.dutra.dsCatalog.dtos;
 
 import com.dutra.dsCatalog.entities.Category;
 import com.dutra.dsCatalog.entities.Product;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -10,10 +14,14 @@ import java.util.Set;
 
 public class ProductDto {
     private Long id;
+    @NotBlank(message = "Name required.")
+    @Size(min = 5, max = 10, message = "Between 5 and 10 characters.")
     private String name;
     private String description;
+    @Positive(message = "Price must be positive.")
     private Double price;
     private String imgUrl;
+    @PastOrPresent(message = "Date cannot be in the future.")
     private Instant date;
 
     private List<CategoryDto> categories = new ArrayList<>();

@@ -1,6 +1,8 @@
 package com.dutra.dsCatalog.dtos;
 
 import com.dutra.dsCatalog.entities.User;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -9,9 +11,13 @@ import java.util.Set;
 public class UserDto implements Serializable {
 
     private Long id;
+    @NotBlank(message = "First name is required.")
     private String firstName;
+    @NotBlank(message = "Last name is required.")
     private String lastName;
+    @Email(message = "Email is required, and must be valid.")
     private String email;
+
     private Set<RoleDto> roles = new HashSet<>();
 
     public UserDto() {}
