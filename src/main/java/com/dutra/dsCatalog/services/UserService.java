@@ -44,7 +44,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto save(UserInsertDto userInsertDto) {
+    public UserDto InsertUser(UserInsertDto userInsertDto) {
         User user = new User();
         user.setPassword(passwordEncoder.encode(userInsertDto.getPassword()));
 
@@ -54,7 +54,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto updateCategory(Long id, UserDto userDto) {
+    public UserDto updateUser(Long id, UserDto userDto) {
         try {
             User user = repository.getReferenceById(id);
 
