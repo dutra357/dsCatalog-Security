@@ -1,9 +1,9 @@
-package com.dutra.dsCatalog.controller.exceptions;
+package com.dutra.dsCatalog.dtos.exceptions;
 
 import java.io.Serializable;
 import java.time.Instant;
 
-public class Error implements Serializable {
+public class CustomError implements Serializable {
 
     private Instant timestamp;
     private Integer status;
@@ -11,12 +11,19 @@ public class Error implements Serializable {
     private String message;
     private String path;
 
-    public Error() {}
-    public Error(Instant timestamp, Integer status, String error, String message, String path) {
+    public CustomError() {}
+    public CustomError(Instant timestamp, Integer status, String error, String message, String path) {
         this.timestamp = timestamp;
         this.status = status;
         this.error = error;
         this.message = message;
+        this.path = path;
+    }
+
+    public CustomError(Instant timestamp, Integer status, String error, String path) {
+        this.timestamp = timestamp;
+        this.status = status;
+        this.error = error;
         this.path = path;
     }
 

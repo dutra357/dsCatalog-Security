@@ -2,6 +2,7 @@ package com.dutra.dsCatalog.controller;
 
 import com.dutra.dsCatalog.dtos.UserDto;
 import com.dutra.dsCatalog.dtos.UserInsertDto;
+import com.dutra.dsCatalog.dtos.UserUpdateDto;
 import com.dutra.dsCatalog.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -43,7 +44,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDto> updateUser(@Valid @PathVariable Long id, @RequestBody UserInsertDto userUpdate) {
+    public ResponseEntity<UserDto> updateUser(@Valid @PathVariable Long id, @RequestBody UserUpdateDto userUpdate) {
         UserDto userDto = service.updateUser(id, userUpdate);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()

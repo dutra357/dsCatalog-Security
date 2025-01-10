@@ -1,9 +1,11 @@
 package com.dutra.dsCatalog.dtos;
 
 import com.dutra.dsCatalog.entities.User;
+import com.dutra.dsCatalog.services.validator.UserInsertValid;
 
 import java.io.Serializable;
 
+@UserInsertValid
 public class UserInsertDto extends UserDto implements Serializable {
     private String password;
 

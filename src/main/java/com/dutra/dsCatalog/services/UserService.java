@@ -3,6 +3,7 @@ package com.dutra.dsCatalog.services;
 import com.dutra.dsCatalog.dtos.RoleDto;
 import com.dutra.dsCatalog.dtos.UserDto;
 import com.dutra.dsCatalog.dtos.UserInsertDto;
+import com.dutra.dsCatalog.dtos.UserUpdateDto;
 import com.dutra.dsCatalog.entities.Role;
 import com.dutra.dsCatalog.entities.User;
 import com.dutra.dsCatalog.repositories.RoleRepository;
@@ -54,11 +55,11 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto updateUser(Long id, UserDto userDto) {
+    public UserDto updateUser(Long id, UserUpdateDto userUpdateDto) {
         try {
             User user = repository.getReferenceById(id);
 
-            copyToEntity(user, userDto);
+            copyToEntity(user, userUpdateDto);
 
             return new UserDto(repository.save(user));
         } catch (EntityNotFoundException e) {

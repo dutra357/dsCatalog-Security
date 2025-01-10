@@ -1,6 +1,7 @@
 package com.dutra.dsCatalog.controller.handlers;
 
-import com.dutra.dsCatalog.controller.exceptions.Error;
+import com.dutra.dsCatalog.dtos.exceptions.CustomError;
+import com.dutra.dsCatalog.dtos.exceptions.ValidationError;
 import com.dutra.dsCatalog.services.exceptions.DataBaseException;
 import com.dutra.dsCatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,27 +11,47 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Instant;
 
 @RestControllerAdvice
-public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
+public class ControllerExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Error> entityNotFoundException(ResourceNotFoundException exception, HttpServletRequest request) {
+    public ResponseEntity<CustomError> entityNotFoundException(ResourceNotFoundException exception, HttpServletRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
-        Error error = new Error(Instant.now(), status.value(), "Resource not found.", exception.getMessage(), request.getRequestURI());
+        CustomError customError = new CustomError(Instant.now(), status.value(), "Resource not found.", exception.getMessage(), request.getRequestURI());
 
-        return ResponseEntity.status(status).body(error);
+        return ResponseEntity.status(status).body(customError);
     }
 
     @ExceptionHandler(DataBaseException.class)
-    public ResponseEntity<Error> dataBaseException(DataBaseException exception, HttpServletRequest request) {
+    public ResponseEntity<CustomError> dataBaseException(DataBaseException exception, HttpServletRequest request) {
         HttpStatus status = HttpStatus.CONFLICT;
-        Error error = new Error(Instant.now(), status.value(), "DataBase exception.", exception.getMessage(), request.getRequestURI());
+        CustomError customError = new CustomError(Instant.now(), status.value(), "DataBase exception.", exception.getMessage(), request.getRequestURI());
+
+        return ResponseEntity.status(status).body(customError);
+    }
+
+//    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+//    public ResponseEntity<CustomError> integrityConstraintViolationException(SQLIntegrityConstraintViolationException exception, HttpServletRequest request) {
+//        HttpStatus status = HttpStatus.CONFLICT;
+//        CustomError customError = new CustomError(Instant.now(), status.value(), "Integrity constraint violation.", exception.getMessage(), request.getRequestURI());
+//
+//        return ResponseEntity.status(status).body(customError);
+//    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationError> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+
+        ValidationError error = new ValidationError(Instant.now(), status.value(), "Validation exception.", exception.getMessage(), request.getRequestURI());
+
+        for (FieldError err : exception.getBindingResult().getFieldErrors()) {
+            error.addError(err.getField(), err.getDefaultMessage());
+        }
 
         return ResponseEntity.status(status).body(error);
     }
-    
 }
