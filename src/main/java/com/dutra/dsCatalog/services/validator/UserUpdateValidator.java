@@ -1,27 +1,27 @@
 package com.dutra.dsCatalog.services.validator;
 
-import com.dutra.dsCatalog.dtos.UserUpdateDto;
-import com.dutra.dsCatalog.dtos.exceptions.FieldMessage;
-import com.dutra.dsCatalog.entities.User;
-import com.dutra.dsCatalog.repositories.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.web.servlet.HandlerMapping;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.dutra.dsCatalog.dtos.UserUpdateDto;
+import com.dutra.dsCatalog.dtos.exceptions.FieldMessage;
+import com.dutra.dsCatalog.entities.User;
+import com.dutra.dsCatalog.repositories.UserRepository;
+import jakarta.validation.ConstraintValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.HandlerMapping;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintValidatorContext;
+
 public class UserUpdateValidator implements ConstraintValidator<UserUpdateValid, UserUpdateDto> {
 
-    private final UserRepository repository;
-    private final HttpServletRequest request;
+    @Autowired
+    private HttpServletRequest request;
 
-    public UserUpdateValidator(UserRepository repository, HttpServletRequest request) {
-        this.repository = repository;
-        this.request = request;
-    }
+    @Autowired
+    private UserRepository repository;
 
     @Override
     public void initialize(UserUpdateValid ann) {
@@ -30,14 +30,15 @@ public class UserUpdateValidator implements ConstraintValidator<UserUpdateValid,
     @Override
     public boolean isValid(UserUpdateDto dto, ConstraintValidatorContext context) {
 
-        var uriVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        Long userid = Long.parseLong(uriVariables.get("id"));
+        @SuppressWarnings("unchecked")
+        var uriVars = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        long userId = Long.parseLong(uriVars.get("id"));
 
         List<FieldMessage> list = new ArrayList<>();
 
         User user = repository.findByEmail(dto.getEmail());
-        if (user != null && userid != user.getId()) {
-            list.add(new FieldMessage("email", "Email already exists in data base."));
+        if (user != null && userId != user.getId()) {
+            list.add(new FieldMessage("email", "Email já existe"));
         }
 
         for (FieldMessage e : list) {

@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDto> updateUser(@Valid @PathVariable Long id, @RequestBody UserUpdateDto userUpdate) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateDto userUpdate) {
         UserDto userDto = service.updateUser(id, userUpdate);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
