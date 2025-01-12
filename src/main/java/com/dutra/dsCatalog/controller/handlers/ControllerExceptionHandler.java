@@ -12,7 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Instant;
 
 @RestControllerAdvice
@@ -33,14 +32,6 @@ public class ControllerExceptionHandler {
 
         return ResponseEntity.status(status).body(customError);
     }
-
-//    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-//    public ResponseEntity<CustomError> integrityConstraintViolationException(SQLIntegrityConstraintViolationException exception, HttpServletRequest request) {
-//        HttpStatus status = HttpStatus.CONFLICT;
-//        CustomError customError = new CustomError(Instant.now(), status.value(), "Integrity constraint violation.", exception.getMessage(), request.getRequestURI());
-//
-//        return ResponseEntity.status(status).body(customError);
-//    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationError> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpServletRequest request) {

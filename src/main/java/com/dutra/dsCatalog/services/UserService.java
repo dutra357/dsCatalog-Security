@@ -12,6 +12,7 @@ import com.dutra.dsCatalog.repositories.projections.UserDetailsProjection;
 import com.dutra.dsCatalog.services.exceptions.DataBaseException;
 import com.dutra.dsCatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +32,14 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
     private final RoleRepository roleRepository;
-    public UserService(UserRepository repository, RoleRepository roleRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository repository,
+                       RoleRepository roleRepository,
+                       @Lazy PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -68,14 +75,11 @@ public class UserService implements UserDetailsService {
     @Transactional
     public UserDto InsertUser(UserInsertDto userInsertDto) {
         User user = new User();
-        user.setPassword(passwordEncoder(userInsertDto.getPassword()));
+        user.setPassword(passwordEncoder.encode(userInsertDto.getPassword()));
 
         copyToEntity(user, userInsertDto);
 
         return new UserDto(repository.save(user));
-    }
-    private String passwordEncoder(String password) {
-        return new BCryptPasswordEncoder().encode(password);
     }
 
     @Transactional
