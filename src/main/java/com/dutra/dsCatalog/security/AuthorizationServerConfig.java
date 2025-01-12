@@ -66,6 +66,7 @@ public class AuthorizationServerConfig {
     public SecurityFilterChain asSecurityFilterChain(HttpSecurity http) throws Exception {
 
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+        //http.with(OAuth2AuthorizationServerConfigurer.authorizationServer(), Customizer.withDefaults());
 
         // @formatter:off
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
