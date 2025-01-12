@@ -3,7 +3,7 @@ package com.dutra.dsCatalog.services;
 import com.dutra.dsCatalog.dtos.ProductDto;
 import com.dutra.dsCatalog.entities.Category;
 import com.dutra.dsCatalog.entities.Product;
-import com.dutra.dsCatalog.factory.Factory;
+import com.dutra.dsCatalog.utils.Factory;
 import com.dutra.dsCatalog.repositories.CategoryRepository;
 import com.dutra.dsCatalog.repositories.ProductRepository;
 import com.dutra.dsCatalog.services.exceptions.DataBaseException;

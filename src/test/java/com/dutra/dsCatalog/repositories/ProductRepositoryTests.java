@@ -1,7 +1,7 @@
 package com.dutra.dsCatalog.repositories;
 
 import com.dutra.dsCatalog.entities.Product;
-import com.dutra.dsCatalog.factory.Factory;
+import com.dutra.dsCatalog.utils.Factory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.dutra.dsCatalog.factory;
+package com.dutra.dsCatalog.utils;
 
 import com.dutra.dsCatalog.dtos.ProductDto;
 import com.dutra.dsCatalog.entities.Category;

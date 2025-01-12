@@ -1,7 +1,8 @@
 package com.dutra.dsCatalog.integration;
 
 import com.dutra.dsCatalog.dtos.ProductDto;
-import com.dutra.dsCatalog.factory.Factory;
+import com.dutra.dsCatalog.utils.Factory;
+import com.dutra.dsCatalog.utils.TokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,10 @@ public class ProductControllerIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private TokenUtil tokenUtil;
+
+    private String bearerToken;
     private Long existingId;
     private Long notExistingId;
     private Long totalProducts;
@@ -41,6 +46,9 @@ public class ProductControllerIT {
         totalProducts = 25L;
 
         productDto = Factory.createProductDto();
+
+        bearerToken = tokenUtil.obtainAccessToken(mockMvc, "maria@gmail.com", "123456");
+
     }
 
     @Test
@@ -59,6 +67,7 @@ public class ProductControllerIT {
 
         ResultActions resultActions = mockMvc
                 .perform(MockMvcRequestBuilders.put("/products/{id}", existingId)
+                        .header("Authorization", "Bearer " + bearerToken)
                         .content(productJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
@@ -75,6 +84,7 @@ public class ProductControllerIT {
 
         ResultActions resultActions = mockMvc
                 .perform(MockMvcRequestBuilders.put("/products/{id}", notExistingId)
+                        .header("Authorization", "Bearer " + bearerToken)
                         .content(productJson)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
