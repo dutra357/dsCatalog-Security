@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -16,7 +17,6 @@ import java.net.URI;
 public class CategoryController {
 
     private final CategoryService service;
-
     public CategoryController(CategoryService service) {
         this.service = service;
     }
@@ -31,6 +31,7 @@ public class CategoryController {
         return ResponseEntity.ok(service.findById(id));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
     @PostMapping
     public ResponseEntity<CategoryDto> save(@Valid @RequestBody CategoryDto newCategory) {
         CategoryDto categorySaved = service.save(newCategory);
@@ -41,6 +42,7 @@ public class CategoryController {
         return ResponseEntity.created(uri).body(categorySaved);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
     @PutMapping(value = "/{id}")
     public ResponseEntity<CategoryDto> updateCategory(@Valid  @PathVariable Long id, @RequestBody CategoryDto categoryIn) {
         CategoryDto categoryUpDate = service.updateCategory(id, categoryIn);
@@ -51,7 +53,7 @@ public class CategoryController {
         return ResponseEntity.ok().location(uri).body(categoryUpDate);
 
     }
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
